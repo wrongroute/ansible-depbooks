@@ -2,6 +2,48 @@
   vars:
   
   tasks:
-  - name: install-iis
-    win_feature:
-      name: "Web-Server"
+- name: Stop service
+  win_service:
+    name: {{ service_name }}
+    state: stopped
+  register: service_output
+- name: Kill process
+  when: service_output.state != 'stopped'
+  ...
+  
+- name: Delete service
+  ...
+  
+- name: Delete files
+  # Get child-folders, exclude logs, delete all files
+    
+
+
+'''
+- name: Run multi-lined shell commands
+  win_shell: |
+  $svcName = $OctopusParameters['ServiceName']
+
+Write-Host "Checking for service " + $svcName
+$svcpid = (get-wmiobject Win32_Service | where{$_.Name -eq $svcName}).ProcessId
+if($svcpid){
+  Write-Host "Found PID " + $svcpid 
+
+  Stop-Service $svcName
+  Start-Sleep -seconds 10
+
+  $service = Get-Service -name $svcName | Select -Property Status
+  if($service.Status -ne "Stopped"){	Start-Sleep -seconds 5 }
+
+  #Check-Service process 
+  if($svcpid){
+      #still exists?
+      $p = get-process -id $svcpid -ErrorAction SilentlyContinue
+      Write-Host "Rechecking PID"
+      if($p){
+          Write-Host "Killing Service"
+          Stop-Process $p.Id -force
+      }
+  }
+}
+'''
