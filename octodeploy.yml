@@ -1,0 +1,7 @@
+- hosts: windows
+  vars:
+  
+  tasks:
+  - name: install-iis
+    win_feature:
+      name: "Web-Server"
