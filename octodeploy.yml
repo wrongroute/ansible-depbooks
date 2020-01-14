@@ -9,12 +9,15 @@
   register: service_output
 - name: Kill process
   when: service_output.state != 'stopped'
-  ...
+  win_command: taskkill /f /fi "Services eq {{ srv_name }}"
+  register: cmd_result_service_kill 
   
 - name: Clean base directory
   
 - name: Delete service
-  ...
+  win_service:
+    name: {{ service_name }}
+    state: absent
   
 - name: Delete files
   # Get child-folders, exclude logs, delete all files
@@ -23,12 +26,34 @@
 - name: Deploy config
 
 - name: Create service
+  win_service:
+    name: {{ service_name }}
+    path: {{ service_path }}
+    display_name: {{ service_display_name }}
+    username: DOMAIN\User  {{ service_username }}
+    password: {{ service_password }}
+    dependencies: {{ service_dependencies }}
+    description: {{ service_description }}
 
 - name: Setup permissions
+  win_acl:
+    path: {{ work_directory }}
+    user: {{ service_username }}
+    rights: FullControl, Modify, Read
+    type: allow
+    state: present
+    inherit: ContainerInherit, ObjectInherit
 
 - name: Start service
+  win_service:
+    name: {{ service_name }}
+    state: started
+  register: service_output
 
 - name: Remove temp directory
+  win_file:
+    path: {{ temp_directory }}
+    state: absent
 
 - name: Send mail notification
     
