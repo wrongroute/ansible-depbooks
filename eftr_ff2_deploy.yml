@@ -1,6 +1,4 @@
-- hosts: windows
-  vars:
-  
+- hosts: ff2
   tasks:
   
 - name: Stop service
@@ -19,25 +17,51 @@
     name: {{ srv_name }}
     state: absent
   
-- name: Clean base directory
-  # Get child-folders, exclude logs, delete all files
+- name: Find folder in work directory
+  win_find:
+    paths: {{ srv_path }}
+    file_type: directory
+  register: get_directories
+  
+- name: Clean base dir
+  win_file:
+    path: "{{ item }}"
+    state: absent
+  loop: {{ get_directories.files.path }}
+  loop_control:
+    pause: 10
+  when: 'logs' not in item
+  
   
 - name: Deploy packets
+...
+
 - name: Deploy config
+...
+
+- name: Remove temp config dir
+  win_file:
+    path: {{ temp_config_dir }}
+    state: absent
 
 - name: Create service
   win_service:
     name: {{ srv_name }}
     path: {{ srv_path }}
     display_name: {{ srv_display_name }}
-    username: DOMAIN\User  {{ srv_username }}
+    username: DOMAIN\User {{ srv_username }}
     password: {{ srv_password }}
     dependencies: {{ srv_dependencies }}
     description: {{ srv_description }}
 
+- name: Create directory structure
+  win_file:
+    path: {{ srv_path }}
+    state: directory
+
 - name: Setup permissions
   win_acl:
-    path: {{ srv_directory }}
+    path: {{ srv_path }}
     user: {{ srv_username }}
     rights: FullControl, Modify, Read
     type: allow
@@ -50,9 +74,18 @@
     state: started
   register: service_output
 
-- name: Remove temp directory
+- name: Remove temp dir
   win_file:
-    path: {{ temp_directory }}
+    path: {{ temp_dir }}
     state: absent
 
 - name: Send mail notification
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: username@gmail.com
+    password: mysecret
+    to: John Smith <john.smith@example.com>
+    subject: Ansible-report
+    body: System {{ ansible_hostname }} has been successfully provisioned.
+  delegate_to: localhost
