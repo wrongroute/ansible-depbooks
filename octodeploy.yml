@@ -11,11 +11,26 @@
   when: service_output.state != 'stopped'
   ...
   
+- name: Clean base directory
+  
 - name: Delete service
   ...
   
 - name: Delete files
   # Get child-folders, exclude logs, delete all files
+  
+- name: Deploy packet
+- name: Deploy config
+
+- name: Create service
+
+- name: Setup permissions
+
+- name: Start service
+
+- name: Remove temp directory
+
+- name: Send mail notification
     
 
 
