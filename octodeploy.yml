@@ -2,27 +2,27 @@
   vars:
   
   tasks:
+  
 - name: Stop service
   win_service:
     name: {{ srv_name }}
     state: stopped
   register: service_output
+  
 - name: Kill process
   when: service_output.state != 'stopped'
   win_command: taskkill /f /fi "Services eq {{ srv_name }}"
   register: cmd_result_service_kill 
-  
-- name: Clean base directory
   
 - name: Delete service
   win_service:
     name: {{ srv_name }}
     state: absent
   
-- name: Delete files
+- name: Clean base directory
   # Get child-folders, exclude logs, delete all files
   
-- name: Deploy packet
+- name: Deploy packets
 - name: Deploy config
 
 - name: Create service
@@ -56,34 +56,3 @@
     state: absent
 
 - name: Send mail notification
-    
-
-
-'''
-- name: Run multi-lined shell commands
-  win_shell: |
-  $svcName = $OctopusParameters['ServiceName']
-
-Write-Host "Checking for service " + $svcName
-$svcpid = (get-wmiobject Win32_Service | where{$_.Name -eq $svcName}).ProcessId
-if($svcpid){
-  Write-Host "Found PID " + $svcpid 
-
-  Stop-Service $svcName
-  Start-Sleep -seconds 10
-
-  $service = Get-Service -name $svcName | Select -Property Status
-  if($service.Status -ne "Stopped"){	Start-Sleep -seconds 5 }
-
-  #Check-Service process 
-  if($svcpid){
-      #still exists?
-      $p = get-process -id $svcpid -ErrorAction SilentlyContinue
-      Write-Host "Rechecking PID"
-      if($p){
-          Write-Host "Killing Service"
-          Stop-Process $p.Id -force
-      }
-  }
-}
-'''
