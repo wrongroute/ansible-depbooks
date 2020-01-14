@@ -4,7 +4,7 @@
   tasks:
 - name: Stop service
   win_service:
-    name: {{ service_name }}
+    name: {{ srv_name }}
     state: stopped
   register: service_output
 - name: Kill process
@@ -16,7 +16,7 @@
   
 - name: Delete service
   win_service:
-    name: {{ service_name }}
+    name: {{ srv_name }}
     state: absent
   
 - name: Delete files
@@ -27,18 +27,18 @@
 
 - name: Create service
   win_service:
-    name: {{ service_name }}
-    path: {{ service_path }}
-    display_name: {{ service_display_name }}
-    username: DOMAIN\User  {{ service_username }}
-    password: {{ service_password }}
-    dependencies: {{ service_dependencies }}
-    description: {{ service_description }}
+    name: {{ srv_name }}
+    path: {{ srv_path }}
+    display_name: {{ srv_display_name }}
+    username: DOMAIN\User  {{ srv_username }}
+    password: {{ srv_password }}
+    dependencies: {{ srv_dependencies }}
+    description: {{ srv_description }}
 
 - name: Setup permissions
   win_acl:
-    path: {{ work_directory }}
-    user: {{ service_username }}
+    path: {{ srv_directory }}
+    user: {{ srv_username }}
     rights: FullControl, Modify, Read
     type: allow
     state: present
@@ -46,7 +46,7 @@
 
 - name: Start service
   win_service:
-    name: {{ service_name }}
+    name: {{ srv_name }}
     state: started
   register: service_output
 
