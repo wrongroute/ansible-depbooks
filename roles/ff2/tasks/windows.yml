@@ -34,8 +34,15 @@
   when: 'logs' not in item
   
   
-- name: Deploy packets
-...
+- name: Download nuget packet
+  win_get_url:
+    url: {{ some_url }}
+    dest: {{ srv_path }}
+    
+- name: Unzip nuget packet
+  win_unzip:
+    src: {{ srv_path }}
+    dest: C:\ExtractedLogs\application-error-logs
 
 - name: Deploy config
 ...
@@ -50,7 +57,7 @@
     name: {{ srv_name }}
     path: {{ srv_path }}
     display_name: {{ srv_display_name }}
-    username: DOMAIN\User {{ srv_username }}
+    username: {{ srv_username }}
     password: {{ srv_password }}
     dependencies: {{ srv_dependencies }}
     description: {{ srv_description }}
