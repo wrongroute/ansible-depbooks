@@ -2,74 +2,84 @@
   
 - name: Stop service
   win_service:
-    name: {{ srv_name }}
+    name: "{{ srv_name }}"
     state: stopped
   register: service_output
   
 - name: Kill process
   when: service_output.state != 'stopped'
   win_shell: | 
-  $svcpid=(Get-WmiObject -Class Win32_Service | where{$_.Name -eq '{{ srv_name }}'}).ProcessId
+  $svcpid=(Get-WmiObject -Class Win32_Service | where{$_.Name -eq "{{ srv_name }}"}).ProcessId
   Stop-Process $svcpid -Force
   
 - name: Delete service
   win_service:
-    name: {{ srv_name }}
+    name: "{{ srv_name }}"
     state: absent
   
 - name: Find folder in work directory
   win_find:
-    paths: {{ srv_path }}
+    paths: "{{ srv_path }}"
     file_type: directory
   register: get_directories
   
 - name: Clean base dir
   win_file:
-    path: "{{ item }}"
+    path: "{{ srv_path}}{{ item.filename }}"
     state: absent
-  loop: {{ get_directories.files.path }}
+  loop: "{{ get_directories.files }}"
   loop_control:
     pause: 10
-  when: 'logs' not in item
+  when: item.filename != "logs"
   
+- name: Add a powershell module NuGet
+  win_psmodule:
+    name: NuGet
+    state: present
+
+- name: Add a powershell module Pscx
+  win_psmodule:
+    name: Pscx
+    state: present
+    allow_clobber: True  
   
 - name: Download nuget packet
   win_get_url:
-    url: {{ some_url }}
-    dest: {{ srv_path }}
+    url: "{{ some_url }}"
+    dest: "{{ srv_path }}"
     
 - name: Unzip nuget packet
   win_unzip:
-    src: {{ srv_path }}
-    dest: C:\ExtractedLogs\application-error-logs
+    src: "{{ srv_path }}"
+    dest: "{{ srv_path }}"
 
 - name: Deploy config
 ...
 
 - name: Remove temp config dir
   win_file:
-    path: {{ temp_config_dir }}
+    path: "{{ temp_config_dir }}"
     state: absent
 
 - name: Create service
   win_service:
-    name: {{ srv_name }}
-    path: {{ srv_path }}
-    display_name: {{ srv_display_name }}
-    username: {{ srv_username }}
-    password: {{ srv_password }}
-    dependencies: {{ srv_dependencies }}
-    description: {{ srv_description }}
+    name: "{{ srv_name }}"
+    path: "{{ srv_path }}"
+    display_name: "{{ srv_display_name }}"
+    username: "{{ srv_username }}"
+    password: "{{ srv_password }}"
+    dependencies: "{{ srv_dependencies }}"
+    description: "{{ srv_description }}"
 
 - name: Create directory structure
   win_file:
-    path: {{ srv_path }}
+    path: "{{ srv_path }}"
     state: directory
 
 - name: Setup permissions
   win_acl:
-    path: {{ srv_path }}
-    user: {{ srv_username }}
+    path: "{{ srv_path }}"
+    user: "{{ srv_username }}"
     rights: FullControl, Modify, Read
     type: allow
     state: present
@@ -77,13 +87,13 @@
 
 - name: Start service
   win_service:
-    name: {{ srv_name }}
+    name: "{{ srv_name }}"
     state: started
   register: service_output
 
 - name: Remove temp dir
   win_file:
-    path: {{ temp_dir }}
+    path: "{{ temp_dir }}"
     state: absent
 
 - name: Send mail notification
@@ -94,5 +104,5 @@
     password: mysecret
     to: John Smith <john.smith@example.com>
     subject: Ansible-report
-    body: System {{ ansible_hostname }} has been successfully provisioned.
+    body: System "{{ ansible_hostname }}" has been successfully provisioned.
   delegate_to: localhost
