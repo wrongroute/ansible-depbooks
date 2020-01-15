@@ -8,7 +8,6 @@
   
 - name: Kill process
   when: service_output.state != 'stopped'
-  - name: Run multi-lined shell commands
   win_shell: | 
   $svcpid=(Get-WmiObject -Class Win32_Service | where{$_.Name -eq '{{ srv_name }}'}).ProcessId
   Stop-Process $svcpid -Force
