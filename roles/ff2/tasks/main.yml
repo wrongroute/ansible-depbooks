@@ -1,0 +1,3 @@
+- name: Import distrib based tasks
+  import_tasks: windows.yml
+  when: ansible_facts['os_family']|lower == 'windows'
