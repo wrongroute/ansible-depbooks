@@ -1,4 +1,3 @@
-- hosts: ff2
   tasks:
   
 - name: Stop service
