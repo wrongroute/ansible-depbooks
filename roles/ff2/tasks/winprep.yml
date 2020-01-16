@@ -1,6 +1,36 @@
 
 tasks:
 
+- name: Create service directory
+  win_file:
+    path: "{{ srv_path }}"
+    state: directory
+
+- name: Create log directory
+  win_file:
+    path: "{{ srv_path }}\\logs"
+    state: directory
+ 
+- name: Setup permissions
+  win_acl:
+    path: "{{ srv_path }}\\logs"
+    user: "{{ srv_username }}"
+    rights: FullControl, Modify, Read
+    type: allow
+    state: present
+    inherit: ContainerInherit, ObjectInherit
+
+- name: Add a powershell module NuGet
+  win_psmodule:
+    name: NuGet
+    state: present
+
+- name: Add a powershell module Pscx
+  win_psmodule:
+    name: Pscx
+    state: present
+    allow_clobber: True
+
 - name: Download Powershell Core msi
       win_get_url:
         url: https://github.com/PowerShell/PowerShell/releases/download/v6.2.3/PowerShell-6.2.3-win-x64.msi
@@ -16,5 +46,3 @@ tasks:
         - ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1
         - ENABLE_PSREMOTING=1
         - REGISTER_MANIFEST=1
-    
-
