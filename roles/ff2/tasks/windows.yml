@@ -1,5 +1,4 @@
-  tasks:
-  
+tasks:  
 - name: Stop service
   win_service:
     name: "{{ srv_name }}"
@@ -43,19 +42,35 @@
     state: present
     allow_clobber: True  
   
-- name: Download nuget packet
+- name: Download nuget apppack
   win_get_url:
-    url: "{{ some_url }}"
+    url: "{{ app_url }}"
     dest: "{{ srv_path }}"
     
-- name: Unzip nuget packet
+- name: Unzip nuget apppack
   win_unzip:
-    src: "{{ srv_path }}"
+    src: "{{ srv_path }}\{{ apppack_name }}"
     dest: "{{ srv_path }}"
 
-- name: Deploy config
-...
+# not need with win_template #too
+- name: Download nuget configpack
+  win_get_url:
+    url: "{{ config_url }}"
+    dest: "{{ temp_config_dir }}"
+# too
+- name: Unzip nuget configpack
+  win_unzip:
+    src: "{{ temp_config_dir }}\{{ configpack_name }}"
+    dest: "{{ srv_path }}"
 
+#finish
+- name: Create files from Jinja2 templates
+  win_template:
+    src: {{ item }}
+    dest: {{ srv_path }}
+  loop: {{ templates }}
+
+#too
 - name: Remove temp config dir
   win_file:
     path: "{{ temp_config_dir }}"
@@ -64,21 +79,22 @@
 - name: Create service
   win_service:
     name: "{{ srv_name }}"
-    path: "{{ srv_path }}"
+    path: "{{ srv_path }}/nginx.srv.exe"
     display_name: "{{ srv_display_name }}"
     username: "{{ srv_username }}"
     password: "{{ srv_password }}"
     dependencies: "{{ srv_dependencies }}"
+    dependency_action: add
     description: "{{ srv_description }}"
 
-- name: Create directory structure
+- name: Create log directory structure
   win_file:
-    path: "{{ srv_path }}"
+    path: "{{ srv_path }}/logs"
     state: directory
 
 - name: Setup permissions
   win_acl:
-    path: "{{ srv_path }}"
+    path: "{{ srv_path }}/logs"
     user: "{{ srv_username }}"
     rights: FullControl, Modify, Read
     type: allow
