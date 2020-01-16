@@ -8,40 +8,8 @@ tasks:
 - include_tasks: winprep.yml
   when: service_check.exists == False
   
-- name: Stop service
-  win_service:
-    name: "{{ srv_name }}"
-    state: stopped
-  register: service_output
+- include_tasks: winsvcprep.yml
   when: service_check.exists == True
-  
-- name: Kill process
-  when: service_output.state != 'stopped'
-  win_shell: | 
-  $svcpid=(Get-WmiObject -Class Win32_Service | where{$_.Name -eq "{{ srv_name }}"}).ProcessId
-  Stop-Process $svcpid -Force
-  when: service_check.exists == True
-  
-- name: Delete service
-  win_service:
-    name: "{{ srv_name }}"
-    state: absent
-  hen: service_check.exists == True
-  
-- name: Find folder in work directory
-  win_find:
-    paths: "{{ srv_path }}"
-    file_type: directory
-  register: get_directories
-  
-- name: Clean base dir
-  win_file:
-    path: "{{ srv_path}}{{ item.filename }}"
-    state: absent
-  loop: "{{ get_directories.files }}"
-  loop_control:
-    pause: 10
-  when: item.filename != "logs"
   
 - name: Download nuget apppack
   win_get_url:
@@ -79,18 +47,18 @@ tasks:
 
 - name: Create service
   win_service:
-    name: "{{ srv_name }}"
-    path: "{{ srv_path }}\\nginx.srv.exe"
-    display_name: "{{ srv_display_name }}"
-    username: "{{ srv_username }}"
-    password: "{{ srv_password }}"
-    dependencies: "{{ srv_dependencies }}"
+    name: "{{ svc_name }}"
+    path: "{{ svc_path }}\\nginx.srv.exe"
+    display_name: "{{ svc_display_name }}"
+    username: "{{ svc_username }}"
+    password: "{{ svc_password }}"
+    dependencies: "{{ svc_dependencies }}"
     dependency_action: add
-    description: "{{ srv_description }}"
+    description: "{{ svc_description }}"
 
 - name: Start service
   win_service:
-    name: "{{ srv_name }}"
+    name: "{{ svc_name }}"
     state: started
   register: service_output
 
