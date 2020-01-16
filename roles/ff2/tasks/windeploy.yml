@@ -2,7 +2,7 @@ tasks:
 
 - name: Check if a service is installed
   win_service:
-    name: "{{ srv_name }}"
+    name: "{{ svc_name }}"
   register: service_check
   
 - include_tasks: winprep.yml
@@ -14,12 +14,12 @@ tasks:
 - name: Download nuget apppack
   win_get_url:
     url: "{{ app_url }}"
-    dest: "{{ srv_path }}"
+    dest: "{{ svc_path }}"
 
 - name: Unzip nuget apppack
   win_unzip:
-    src: "{{ srv_path }}\\{{ apppack_name }}"
-    dest: "{{ srv_path }}"
+    src: "{{ svc_path }}\\{{ apppack_name }}"
+    dest: "{{ svc_path }}"
 
 # not need with win_template #too
 - name: Download nuget configpack
@@ -30,14 +30,14 @@ tasks:
 - name: Unzip nuget configpack
   win_unzip:
     src: "{{ temp_config_dir }}\\{{ configpack_name }}"
-    dest: "{{ srv_path }}"
+    dest: "{{ svc_path }}"
 
 #finish
 - name: Create files from Jinja2 templates
   win_template:
-    src: {{ item }}
-    dest: {{ srv_path }}
-  loop: {{ templates }}
+    src: "{{ item }}"
+    dest: "{{ svc_path }}"
+  loop: "{{ templates }}"
 
 #too
 - name: Remove temp config dir
