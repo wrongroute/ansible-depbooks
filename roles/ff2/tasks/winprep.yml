@@ -3,22 +3,23 @@ tasks:
 
 - name: Create service directory
   win_file:
-    path: "{{ srv_path }}"
+    path: "{{ item }}"
     state: directory
-
-- name: Create log directory
-  win_file:
-    path: "{{ srv_path }}\\logs"
-    state: directory
- 
+  loop:
+   - "{{ srv_path }}"
+   - "{{ srv_path }}\\logs"
+    
 - name: Setup permissions
   win_acl:
-    path: "{{ srv_path }}\\logs"
+    path: "{{ item }}"
     user: "{{ srv_username }}"
     rights: FullControl, Modify, Read
     type: allow
     state: present
     inherit: ContainerInherit, ObjectInherit
+  loop:
+   - "{{ srv_path }}"
+   - "{{ srv_path }}\\logs"
 
 - name: Add a powershell module NuGet
   win_psmodule:
