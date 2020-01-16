@@ -4,25 +4,29 @@ tasks:
   win_service:
     name: "{{ srv_name }}"
   register: service_check
-- import_tasks: winprep.yml
-  when: service_check.exists == True
+  
+- include_tasks: winprep.yml
+  when: service_check.exists == False
   
 - name: Stop service
   win_service:
     name: "{{ srv_name }}"
     state: stopped
   register: service_output
+  when: service_check.exists == True
   
 - name: Kill process
   when: service_output.state != 'stopped'
   win_shell: | 
   $svcpid=(Get-WmiObject -Class Win32_Service | where{$_.Name -eq "{{ srv_name }}"}).ProcessId
   Stop-Process $svcpid -Force
+  when: service_check.exists == True
   
 - name: Delete service
   win_service:
     name: "{{ srv_name }}"
     state: absent
+  hen: service_check.exists == True
   
 - name: Find folder in work directory
   win_find:
@@ -38,16 +42,6 @@ tasks:
   loop_control:
     pause: 10
   when: item.filename != "logs"
-  
-- name: Download nuget apppack
-  win_get_url:
-    url: "{{ app_url }}"
-    dest: "{{ srv_path }}"
-    
-- name: Unzip nuget apppack
-  win_unzip:
-    src: "{{ srv_path }}\\{{ apppack_name }}"
-    dest: "{{ srv_path }}"
 
 # not need with win_template #too
 - name: Download nuget configpack
