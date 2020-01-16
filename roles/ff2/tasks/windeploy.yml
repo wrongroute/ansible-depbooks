@@ -42,6 +42,16 @@ tasks:
   loop_control:
     pause: 10
   when: item.filename != "logs"
+  
+- name: Download nuget apppack
+  win_get_url:
+    url: "{{ app_url }}"
+    dest: "{{ srv_path }}"
+
+- name: Unzip nuget apppack
+  win_unzip:
+    src: "{{ srv_path }}\\{{ apppack_name }}"
+    dest: "{{ srv_path }}"
 
 # not need with win_template #too
 - name: Download nuget configpack
