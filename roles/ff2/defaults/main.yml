@@ -9,3 +9,9 @@ srv_description:
 # temp dirs
 temp_config_dir:
 temp_dir:
+# pack names and urls
+configpack_name:
+apppack_name:
+app_url:
+config_url:
+
