@@ -1,11 +1,11 @@
 # service vars
-srv_name:
-srv_path:
-srv_display_name:
-srv_username:
-srv_password:
-srv_dependencies:
-srv_description:
+svc_name:
+svc_path:
+svc_display_name:
+svc_username:
+svc_password:
+svc_dependencies:
+svc_description:
 # temp dirs
 temp_config_dir:
 temp_dir:
