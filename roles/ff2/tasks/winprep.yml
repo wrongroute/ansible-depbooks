@@ -6,20 +6,20 @@ tasks:
     path: "{{ item }}"
     state: directory
   loop:
-   - "{{ srv_path }}"
-   - "{{ srv_path }}\\logs"
+   - "{{ svc_path }}"
+   - "{{ svc_path }}\\logs"
     
 - name: Setup permissions
   win_acl:
     path: "{{ item }}"
-    user: "{{ srv_username }}"
+    user: "{{ svc_username }}"
     rights: FullControl, Modify, Read
     type: allow
     state: present
     inherit: ContainerInherit, ObjectInherit
   loop:
-   - "{{ srv_path }}"
-   - "{{ srv_path }}\\logs"
+   - "{{ svc_path }}"
+   - "{{ svc_path }}\\logs"
 
 - name: Add a powershell module NuGet
   win_psmodule:
@@ -35,12 +35,12 @@ tasks:
 - name: Download Powershell Core msi
       win_get_url:
         url: https://github.com/PowerShell/PowerShell/releases/download/v6.2.3/PowerShell-6.2.3-win-x64.msi
-        dest: "{{ srv_path }}\\PowerShell-6.2.3-win-x64.msi"
+        dest: "{{ svc_path }}\\PowerShell-6.2.3-win-x64.msi"
         follow_redirects: all
       
 - name: Install Powershell Core from msi
       win_package:
-        path: "{{ srv_path }}\\PowerShell-6.2.3-win-x64.msi"
+        path: "{{ svc_path }}\\PowerShell-6.2.3-win-x64.msi"
         product_id: auto
         state: present
         arguments:
