@@ -49,7 +49,7 @@ tasks:
     
 - name: Unzip nuget apppack
   win_unzip:
-    src: "{{ srv_path }}\{{ apppack_name }}"
+    src: "{{ srv_path }}\\{{ apppack_name }}"
     dest: "{{ srv_path }}"
 
 # not need with win_template #too
@@ -60,7 +60,7 @@ tasks:
 # too
 - name: Unzip nuget configpack
   win_unzip:
-    src: "{{ temp_config_dir }}\{{ configpack_name }}"
+    src: "{{ temp_config_dir }}\\{{ configpack_name }}"
     dest: "{{ srv_path }}"
 
 #finish
@@ -79,7 +79,7 @@ tasks:
 - name: Create service
   win_service:
     name: "{{ srv_name }}"
-    path: "{{ srv_path }}/nginx.srv.exe"
+    path: "{{ srv_path }}\\nginx.srv.exe"
     display_name: "{{ srv_display_name }}"
     username: "{{ srv_username }}"
     password: "{{ srv_password }}"
@@ -89,12 +89,12 @@ tasks:
 
 - name: Create log directory structure
   win_file:
-    path: "{{ srv_path }}/logs"
+    path: "{{ srv_path }}\\logs"
     state: directory
 
 - name: Setup permissions
   win_acl:
-    path: "{{ srv_path }}/logs"
+    path: "{{ srv_path }}\\logs"
     user: "{{ srv_username }}"
     rights: FullControl, Modify, Read
     type: allow
