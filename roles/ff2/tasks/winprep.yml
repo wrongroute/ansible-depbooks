@@ -37,7 +37,7 @@ tasks:
         dest: "{{ srv_path }}\\PowerShell-6.2.3-win-x64.msi"
         follow_redirects: all
       
-- name: Install Remote Desktop Connection Manager from msi
+- name: Install Powershell Core from msi
       win_package:
         path: "{{ srv_path }}\\PowerShell-6.2.3-win-x64.msi"
         product_id: auto
