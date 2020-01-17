@@ -12,7 +12,7 @@ temp_dir:
 # pack names and urls
 configpack_name:
 apppack_name:
-app_url:
+app_pack_url:
 config_url:
 # win_template
 template_conf_dirs:
