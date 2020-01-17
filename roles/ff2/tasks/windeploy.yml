@@ -21,11 +21,17 @@ tasks:
     src: "{{ svc_path }}\\{{ apppack_name }}"
     dest: "{{ svc_path }}"
 
+- name: Create config directories
+  win_file:
+    path: "{{ item.path }}"
+    state: directory
+  loop: "{{ template_conf_dirs }}"
+
 - name: Create files from Jinja2 templates
   win_template:
-    src: "{{ item }}"
-    dest: "{{ svc_path }}"
-  loop: "{{ templates }}"
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}"
+  loop: "{{ template_paths }}"
 
 - name: Create service
   win_service:
@@ -44,6 +50,7 @@ tasks:
     state: started
   register: service_output
 
+#???
 - name: Remove temp dir
   win_file:
     path: "{{ temp_dir }}"
