@@ -13,8 +13,8 @@ tasks:
   
 - name: Download nuget apppack
   win_get_url:
-    url: "{{ app_url }}"
-    dest: "{{ svc_path }}"
+    url: "{{ app_pack_url }}"
+    dest: "{{ svc_path }}\\{{ apppack_name }}"
 
 - name: Unzip nuget apppack
   win_unzip:
