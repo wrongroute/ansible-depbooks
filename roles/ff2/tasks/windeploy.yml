@@ -21,29 +21,11 @@ tasks:
     src: "{{ svc_path }}\\{{ apppack_name }}"
     dest: "{{ svc_path }}"
 
-# not need with win_template #too
-- name: Download nuget configpack
-  win_get_url:
-    url: "{{ config_url }}"
-    dest: "{{ temp_config_dir }}"
-# too
-- name: Unzip nuget configpack
-  win_unzip:
-    src: "{{ temp_config_dir }}\\{{ configpack_name }}"
-    dest: "{{ svc_path }}"
-
-#finish
 - name: Create files from Jinja2 templates
   win_template:
     src: "{{ item }}"
     dest: "{{ svc_path }}"
   loop: "{{ templates }}"
-
-#too
-- name: Remove temp config dir
-  win_file:
-    path: "{{ temp_config_dir }}"
-    state: absent
 
 - name: Create service
   win_service:
