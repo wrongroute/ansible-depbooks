@@ -33,17 +33,17 @@ tasks:
     allow_clobber: True
 
 - name: Download Powershell Core msi
-      win_get_url:
-        url: https://github.com/PowerShell/PowerShell/releases/download/v6.2.3/PowerShell-6.2.3-win-x64.msi
-        dest: "{{ svc_path }}\\PowerShell-6.2.3-win-x64.msi"
-        follow_redirects: all
+  win_get_url:
+    url: https://github.com/PowerShell/PowerShell/releases/download/v6.2.3/PowerShell-6.2.3-win-x64.msi
+    dest: "{{ svc_path }}\\PowerShell-6.2.3-win-x64.msi"
+    follow_redirects: all
       
 - name: Install Powershell Core from msi
-      win_package:
-        path: "{{ svc_path }}\\PowerShell-6.2.3-win-x64.msi"
-        product_id: auto
-        state: present
-        arguments:
-        - ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1
-        - ENABLE_PSREMOTING=1
-        - REGISTER_MANIFEST=1
+  win_package:
+    path: "{{ svc_path }}\\PowerShell-6.2.3-win-x64.msi"
+    product_id: auto
+    state: present
+    arguments:
+    - ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL=1
+    - ENABLE_PSREMOTING=1
+    - REGISTER_MANIFEST=1
