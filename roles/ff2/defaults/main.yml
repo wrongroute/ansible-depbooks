@@ -14,4 +14,26 @@ configpack_name:
 apppack_name:
 app_url:
 config_url:
-
+# win_template
+template_conf_dirs:
+  - path: {{ svc_path }}\\conf.d
+  - path: {{ svc_path }}\\conf.d\\http
+  - path: {{ svc_path }}\\conf.d\\http\\psb_parts
+template_base: /etc/ansible/roles/ff2/templates
+template_paths:
+  - source: {{ template_base }}/nginx.srv.xml.j2
+    dest: {{ svc_path }}\\nginx.srv.xml
+  - source: {{ template_base }}/nginx.conf.j2
+    dest: {{ svc_path }}\\conf\\nginx.conf
+  - sorce: {{ template_base }}/psb.conf.j2
+    dest: {{ svc_path }}\\conf.d\\http\\psb.conf
+  - source: {{ template_base }}/M1.conf.j2
+    dest: {{ svc_path }}\\conf.d\\http\\psb_parts\\M1.conf
+  - source: {{ template_base }}/M2.conf.j2
+    dest: {{ svc_path }}\\conf.d\\http\\psb_parts\\M2.conf
+  - source: {{ template_base }}/Web.conf.j2
+    dest: {{ svc_path }}\\conf.d\\http\\psb_parts\\Web.conf
+  - source: {{ template_base }}/Web-common-headers.inc.j2
+    dest: {{ svc_path }}\\conf.d\\http\\psb_parts\\Web-common-headers.inc
+  - source: {{ template_base }}/WinAdmin.conf.j2
+    dest: {{ svc_path }}\\conf.d\\http\\psb_parts\\WinAdmin.conf
