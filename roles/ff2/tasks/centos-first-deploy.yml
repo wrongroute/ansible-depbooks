@@ -1,9 +1,5 @@
 tasks:
 
-- name: Include centos specific vars
-  include_vars:
-    file: centos-spec.yaml
-
 - name: Upgrade all packages
   yum:
     name: '*'
