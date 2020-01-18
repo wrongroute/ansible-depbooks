@@ -1,5 +1,9 @@
 tasks:
 
+- name: Include centos specific vars
+  include_vars:
+    file: win-spec.yml
+
 - name: Check if a service is installed
   win_service:
     name: "{{ svc_name }}"
