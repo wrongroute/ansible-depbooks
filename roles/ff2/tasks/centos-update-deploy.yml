@@ -1,0 +1,13 @@
+tasks:
+
+- name: Install app from rpm
+  yum:
+     name: "{{ rpm_url }}"
+     state: latest
+     
+ - name: Restart and enable service
+  systemd:
+    name: {{ svc_name }}
+    state: restarted
+    enabled: yes
+    force: yes
