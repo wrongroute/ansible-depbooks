@@ -20,6 +20,15 @@ tasks:
   win_unzip:
     src: "{{ svc_path }}\\{{ apppack_name }}"
     dest: "{{ svc_path }}"
+    
+- name: Setup permissions
+  win_acl:
+    path: "{{ svc_path }}\\logs"
+    user: "{{ svc_username }}"
+    rights: FullControl, Modify, Read
+    type: allow
+    state: present
+    inherit: ContainerInherit, ObjectInherit
 
 - name: Create config directories
   win_file:
