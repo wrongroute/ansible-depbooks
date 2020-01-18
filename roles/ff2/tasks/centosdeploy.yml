@@ -1,14 +1,14 @@
 tasks:
 
-- name: Add repository
-  yum_repository:
-    name: epel
-    description: EPEL YUM repo
-    baseurl: https://download.fedoraproject.org/pub/epel/$releasever/$basearch/
+- name: Upgrade all packages
+  yum:
+    name: '*'
+    state: latest
     
 - name: Install app dependencies
   yum:
     name:
+    - epel-release
     - perl 
     - perl-devel 
     - perl-ExtUtils-Embed 
@@ -20,20 +20,36 @@ tasks:
     - gd-devel 
     - GeoIP 
     - GeoIP-devel
-    state: present
-
-- name: Upgrade all packages
-  yum:
-    name: '*'
     state: latest
     
-- name: Create app directory
-  file:
-    path: "{{ app_path }}"
-    state: directory
-    mode: '0755'
+- name: Install app from rpm
+  yum:
+     name: "{{ rpm_url }}"
+     state: present
+     
+- name: Create systemd unit
+  copy:
+    dest: /etc/systemd/system/{{svc_name}}
+    content: |
+    [Unit]
+    Description={{ svc_description }}
+    Documentation={{ svc_documentation }}
+    After=network-online.target remote-fs.target nss-lookup.target
+    Wants=network-online.target
+
+    [Service]
+    Type=forking
+    PIDFile=/var/run/{{ svc_pid }}
+    ExecStartPre=/usr/sbin/{{ svc_runner }} -t -c {{ svc_conf }}
+    ExecStart=/usr/sbin/{{ svc_runner }} -c {{ svc_conf }}
+    ExecReload=/bin/kill -s HUP $MAINPID
+    ExecStop=/bin/kill -s TERM $MAINPID
+
+    [Install]
+    WantedBy=multi-user.target
     
-- name: Download apps rpm
-  get_url:
-    url: "{{ app_pack_url }}"
-    dest: "{{ app_path }}"
+- name: enable a timer for dnf-automatic
+  systemd:
+    name: {{ svc_name }}
+    state: started
+    enabled: yes
