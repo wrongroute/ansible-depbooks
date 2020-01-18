@@ -7,19 +7,6 @@ tasks:
     state: directory
   loop:
    - "{{ svc_path }}"
-   - "{{ svc_path }}\\logs"
-    
-- name: Setup permissions
-  win_acl:
-    path: "{{ item }}"
-    user: "{{ svc_username }}"
-    rights: FullControl, Modify, Read
-    type: allow
-    state: present
-    inherit: ContainerInherit, ObjectInherit
-  loop:
-   - "{{ svc_path }}"
-   - "{{ svc_path }}\\logs"
 
 - name: Add a powershell module NuGet
   win_psmodule:
