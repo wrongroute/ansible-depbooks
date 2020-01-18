@@ -28,3 +28,6 @@ tasks:
    
  - name: Install package
    command: nuget install Packname -OutputDirectory packages
+   
+ - name: Publish app
+   command: dotnet publish -c Release -r <RID> --self-contained true
