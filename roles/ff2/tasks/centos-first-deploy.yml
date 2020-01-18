@@ -1,5 +1,9 @@
 tasks:
 
+- name: Include centos specific vars
+  include_vars:
+    file: centos-spec.yaml
+
 - name: Upgrade all packages
   yum:
     name: '*'
@@ -24,7 +28,7 @@ tasks:
     
 - name: Add service user
   user:
-    name: "{{ svc_name }}"
+    name: "{{ svc_user }}"
 
 - name: Create service directory
   file:
@@ -39,7 +43,7 @@ tasks:
      
 - name: Create systemd unit
   copy:
-    dest: /etc/systemd/system/{{svc_name}}
+    dest: "/etc/systemd/system/{{svc_name}}"
     content: |
     [Unit]
     Description={{ svc_description }}
