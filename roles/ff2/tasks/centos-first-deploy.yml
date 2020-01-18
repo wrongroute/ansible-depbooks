@@ -57,7 +57,11 @@ tasks:
 
     [Install]
     WantedBy=multi-user.target
-    
+
+- name: Just force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+
 - name: Start and enable service
   systemd:
     name: {{ svc_name }}
