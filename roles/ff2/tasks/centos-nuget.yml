@@ -1,0 +1,30 @@
+tasks:
+
+- name: Add mono repo
+  command: {{ item }}
+  loop:
+  - rpmkeys --import "http://pool.sks-keyservers.net/pks/lookup?op=get&search=0x3fa7e0328081bff6a14da29aa6a19b38d3d831ef"
+  - su -c 'curl https://download.mono-project.com/repo/centos7-stable.repo | tee /etc/yum.repos.d/mono-centos7-stable.repo'
+  
+- name: Install mono
+  yum:
+    name: 
+      - mono-devel
+      - aspnetcore-runtime-3.1
+      - dotnet-runtime-3.1
+      - dotnet-sdk-3.1
+    state: present
+    
+ - name: Download nuget.exe
+   command: sudo curl -o /usr/local/bin/nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+   
+ - name: Add alias
+   lineinfile:
+     path: ~/.bash_aliases or ~/.bash_profile
+     line: alias nuget="mono /usr/local/bin/nuget.exe"
+     
+ - name: Add new source for nuget
+   command: nuget sources Add -Name "MyServer" -Source \\myserver\packages
+   
+ - name: Install package
+   command: nuget install Packname -OutputDirectory packages
