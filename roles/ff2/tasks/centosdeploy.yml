@@ -22,6 +22,16 @@ tasks:
     - GeoIP-devel
     state: latest
     
+- name: Add service user
+  user:
+    name: "{{ svc_name }}"
+
+- name: Create service directory
+  file:
+    path: "{{ svc_path }}"
+    state: directory
+    mode: '0755'
+    
 - name: Install app from rpm
   yum:
      name: "{{ rpm_url }}"
@@ -48,7 +58,7 @@ tasks:
     [Install]
     WantedBy=multi-user.target
     
-- name: enable a timer for dnf-automatic
+- name: Start and enable service
   systemd:
     name: {{ svc_name }}
     state: started
