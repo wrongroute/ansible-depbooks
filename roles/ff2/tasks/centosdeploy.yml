@@ -5,7 +5,8 @@ tasks:
     file: centos-spec.yml
     
 - name: Check if Service Exists
-  stat: path=/etc/init.d/{{ svc_name }}
+  stat: 
+    path: /etc/init.d/{{ svc_name }}
   register: service_status
 
 - include_tasks: centos-first-deploy.yml
