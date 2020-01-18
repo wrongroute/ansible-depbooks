@@ -1,0 +1,10 @@
+# service vars
+svc_name:
+svc_user:
+svc_path:
+svc_description:
+svc_documentation:
+svc_runner:
+svc_conf:
+# download url
+rpm_url:
