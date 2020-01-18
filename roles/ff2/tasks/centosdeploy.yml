@@ -1,0 +1,15 @@
+tasks:
+
+- name: Include centos specific vars
+  include_vars:
+    file: centos-spec.yaml
+    
+- name: Check if Service Exists
+  stat: path=/etc/init.d/{{ svc_name }}
+  register: service_status
+
+- include_tasks: centos-first-deploy.yml
+  when: service_status.stat.exists == False
+  
+- include_tasks: centos-update-deploy.yml
+  when: service_status.stat.exists == True
