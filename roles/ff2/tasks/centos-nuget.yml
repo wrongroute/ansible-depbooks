@@ -30,4 +30,4 @@ tasks:
    command: nuget install Packname -OutputDirectory packages
    
  - name: Publish app
-   command: dotnet publish -c Release -r <RID> --self-contained true
+   command: dotnet publish -c Release -r linux-x64 --self-contained true
