@@ -31,11 +31,16 @@ tasks:
     path: "{{ svc_path }}"
     state: directory
     mode: '0755'
+
+- name: Download nuget packet
+  get_url:
+    url: "{{ nuget_url }}"
+    dest: "{{ svc_path }}/{{ zip_name }}"
     
-- name: Install app from rpm
-  yum:
-     name: "{{ rpm_url }}"
-     state: present
+- name: Unarchive nuget packet
+  unarchive:
+    src: "{{ svc_path }}/{{ zip_name }}"
+    dest: "{{ svc_path }}"
      
 - name: Create systemd unit
   copy:
@@ -49,9 +54,9 @@ tasks:
 
     [Service]
     Type=forking
-    PIDFile=/var/run/{{ svc_pid }}
-    ExecStartPre=/usr/sbin/{{ svc_runner }} -t -c {{ svc_conf }}
-    ExecStart=/usr/sbin/{{ svc_runner }} -c {{ svc_conf }}
+    PIDFile={{ svc_path }}/{{ svc_pid }}
+    ExecStartPre={{ svc_path }}/{{ svc_runner }} -t -c {{ svc_conf }}
+    ExecStart={{ svc_path }}/{{ svc_runner }} -c {{ svc_conf }}
     ExecReload=/bin/kill -s HUP $MAINPID
     ExecStop=/bin/kill -s TERM $MAINPID
 
