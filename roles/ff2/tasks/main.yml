@@ -2,6 +2,6 @@ tasks:
 - name: Import Windows based tasks
   import_tasks: windeploy.yml
   when: ansible_facts['os_family']|lower == 'windows'
-- name: Import Centos based task
-  import_tasks: centosdeploy.yml
-  when: ansible_facts['ansible_distribution']|lower == 'centos'
+- name: Import Linux based task
+  import_tasks: linuxdeploy.yml
+  when: ansible_facts['ansible_system']|lower == 'linux'
