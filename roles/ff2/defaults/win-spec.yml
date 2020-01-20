@@ -12,7 +12,7 @@ temp_dir:
 # pack names and urls
 pack_names:
  - something
-pack_urls:
+pack_url:
 # win_template
 template_conf_dirs:
   - path: {{ svc_path }}\\conf.d
