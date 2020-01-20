@@ -4,7 +4,12 @@ tasks:
   get_url:
     url: "{{ nuget_url }}"
     dest: "{{ svc_path }}/{{ zip_name }}"
-    
+
+- name: Stop service
+  systemd:
+    name: {{ svc_name }}
+    state: stopped
+
 - name: Unarchive nuget packet
   unarchive:
     src: "{{ svc_path }}/{{ zip_name }}"
@@ -16,4 +21,3 @@ tasks:
     name: {{ svc_name }}
     state: restarted
     enabled: yes
-    force: yes
