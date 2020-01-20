@@ -3,10 +3,8 @@ tasks:
 
 - name: Create service directory
   win_file:
-    path: "{{ item }}"
+    path: "{{ svc_path }}"
     state: directory
-  loop:
-   - "{{ svc_path }}"
 
 - name: Add a powershell module NuGet
   win_psmodule:
