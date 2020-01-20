@@ -7,4 +7,5 @@ svc_documentation:
 svc_runner:
 svc_conf:
 # download url
-rpm_url:
+nuget_url:
+zip_name:
