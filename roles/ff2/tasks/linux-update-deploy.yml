@@ -1,11 +1,17 @@
 tasks:
 
-- name: Install app from rpm
-  yum:
-     name: "{{ rpm_url }}"
-     state: latest
+- name: Download nuget packet
+  get_url:
+    url: "{{ nuget_url }}"
+    dest: "{{ svc_path }}/{{ zip_name }}"
+    
+- name: Unarchive nuget packet
+  unarchive:
+    src: "{{ svc_path }}/{{ zip_name }}"
+    dest: "{{ svc_path }}"
+    owner: "{{ svc_user }}"
      
- - name: Restart and enable service
+- name: Restart and enable service
   systemd:
     name: {{ svc_name }}
     state: restarted
