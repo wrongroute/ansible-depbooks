@@ -17,13 +17,15 @@ tasks:
   
 - name: Download nuget apppack
   win_get_url:
-    url: "{{ app_pack_url }}"
-    dest: "{{ svc_path }}\\{{ apppack_name }}"
+    url: "{{ pack_url }}/{{ item }}"
+    dest: "{{ svc_path }}\\{{ item }}"
+  loop: "{{ pack_names }}"
 
 - name: Unzip nuget apppack
   win_unzip:
-    src: "{{ svc_path }}\\{{ apppack_name }}"
+    src: "{{ svc_path }}\\{{ item }}"
     dest: "{{ svc_path }}"
+  loop: "{{ pack_names }}"
     
 - name: Setup permissions
   win_acl:
