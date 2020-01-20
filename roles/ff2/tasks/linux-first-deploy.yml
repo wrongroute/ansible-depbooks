@@ -31,6 +31,7 @@ tasks:
     path: "{{ svc_path }}"
     state: directory
     mode: '0755'
+    owner: "{{ svc_user }}"
 
 - name: Download nuget packet
   get_url:
@@ -41,6 +42,7 @@ tasks:
   unarchive:
     src: "{{ svc_path }}/{{ zip_name }}"
     dest: "{{ svc_path }}"
+    owner: "{{ svc_user }}"
      
 - name: Create systemd unit
   copy:
