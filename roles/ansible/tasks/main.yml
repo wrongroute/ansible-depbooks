@@ -1,0 +1,28 @@
+tasks:
+
+- name: Upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+  
+- name: Install dependencies
+  yum:
+    name:
+    - epel-release
+    - pip
+    state: present
+
+- name: Install winrm depedencies
+- pip:
+    name: {{ item }}
+  loop:
+  - pip setuptools
+  - pyOpenSSL
+  - cryptography
+  - paramiko
+  - pywinrm
+  
+- name: Upgrade all packages
+  yum:
+    name: ansible
+    state: present
