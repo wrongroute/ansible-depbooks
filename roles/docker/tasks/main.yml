@@ -12,6 +12,7 @@ tasks:
     - yum-utils
     - device-mapper-persistent-data
     - lvm2
+    state: present
     
 - name: Add repository
   yum_repository:
@@ -25,6 +26,7 @@ tasks:
     - docker-ce
     - docker-ce-cli
     - containerd.io
+    state: present
     
 - name: Allow docker ports
    firewalld:
