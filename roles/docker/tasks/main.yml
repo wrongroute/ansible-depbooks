@@ -1,6 +1,4 @@
 tasks:
-- vars:
-  docker_unit:
   
 - name: Upgrade all packages
   yum:
