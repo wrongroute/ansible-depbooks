@@ -1,5 +1,7 @@
 tasks:
-    
+- vars:
+  docker_unit:
+  
 - name: Upgrade all packages
   yum:
     name: '*'
@@ -36,19 +38,8 @@ tasks:
    - 2376/tcp
    - 7946/tcp
    - 7946/udp
-   
+   - 4789/udp
 
-
-Use the command sudo systemctl edit docker.service to open an override file for docker.service in a text editor.
-
-Add or modify the following lines, substituting your own values.
-
-[Service]
-ExecStart=
-ExecStart=/usr/bin/dockerd -H fd:// -H tcp://127.0.0.1:2375
-
-
-    
 - name: Start and enable service
   systemd:
     name: docker
