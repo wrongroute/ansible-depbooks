@@ -1,0 +1,4 @@
+- hosts: ForeFront2
+  tasks:
+    - include_role:
+        name: EFTR.ForeFront2

@@ -1,0 +1,25 @@
+# templates and vars inputs
+svc_prefix: dev
+env_name: 
+base_path: 
+
+# service vars
+svc_name: 
+svc_path: "{{ base_path }}\\{{ svc_name|replace('$', '.') }}"
+svc_runner_path: 
+svc_display_name: 
+svc_username: 
+svc_password:
+svc_dependencies: 
+# pack names and urls
+pack_names:
+ - 
+pack_url:
+conf_names:
+ - 
+# templates task vars
+template_conf_dirs:
+  - path: "{{ svc_path }}\\conf.d"
+  - path: "{{ svc_path }}\\conf.d\\http"
+  - path: "{{ svc_path }}\\conf.d\\http\\parts"
+template_base: templates

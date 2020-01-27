@@ -1,0 +1,8 @@
+---
+- name: Import Windows based tasks
+  include_tasks: windows/deploy.yml
+  when: ansible_facts['os_family']|lower == 'windows'
+  
+- name: Import Linux based task
+  include_tasks: linux/deploy.yml
+  when: ansible_facts['system']|lower == 'linux'

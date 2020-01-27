@@ -1,0 +1,16 @@
+---
+svc_name: 
+svc_path: 
+svc_user:
+svc_group:
+
+pack_url:
+pack_names:
+  - 
+conf_names:
+  - 
+template_conf_dirs:
+  - path: "{{ svc_path }}/conf.d"
+  - path: "{{ svc_path }}/conf.d/http"
+  - path: "{{ svc_path }}/conf.d/http/parts"
+template_base: templates

@@ -1,0 +1,42 @@
+---
+- name: Stop service
+  win_service:
+    name: "{{ svc_name }}"
+    state: stopped
+  register: service_output
+  
+- name: Kill process
+  when: service_output.state != "stopped"
+  win_shell: | 
+    $svcpid=(Get-CimInstance -ClassName Win32_Service | where{$_.Name -eq "{{ svc_name }}"}).ProcessId
+    Stop-Process $svcpid -Force
+  
+- name: Delete service
+  win_service:
+    name: "{{ svc_name }}"
+    state: absent
+  
+- name: Find folder in work directory
+  win_find:
+    paths: "{{ svc_path }}"
+    file_type: directory
+  register: get_directories
+  
+- name: Remove dirs from base dir
+  win_file:
+    path: "{{ svc_path }}\\{{ item.filename }}"
+    state: absent
+  loop: "{{ get_directories.files }}"
+  when: item.filename != "logs"
+  
+- name: Find files in work directory
+  win_find:
+    paths: "{{ svc_path }}"
+    file_type: file
+  register: get_files
+
+- name: Remove files from base dir
+  win_file:
+    path: "{{ svc_path }}\\{{ item.filename }}"
+    state: absent
+  loop: "{{ get_files.files }}"

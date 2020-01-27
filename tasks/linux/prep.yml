@@ -1,0 +1,31 @@
+---
+
+- name: Stop service
+  systemd:
+    name: "{{ svc_name }}"
+    state: stopped
+
+- name: Find folder in work directory
+  find:
+    paths: "{{ svc_path }}"
+    file_type: directory
+  register: get_directories
+  
+- name: Remove dirs from base dir
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ get_directories.files }}"
+  when: item.path[-4:] != "logs"
+  
+- name: Find files in work directory
+  find:
+    paths: "{{ svc_path }}"
+    file_type: file
+  register: get_files
+
+- name: Remove files from base dir
+  file:
+    path: "{{ item.path }}"
+    state: absent
+  loop: "{{ get_files.files }}"

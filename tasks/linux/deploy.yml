@@ -1,0 +1,121 @@
+---
+
+- name: Include linux specific vars
+  include_vars:
+    file: linux-spec.yml
+    
+- name: Check if Service Exists
+  stat: 
+    path: "/etc/systemd/system/{{ svc_name }}.service"
+  register: service_status
+  
+- include_tasks: linux/prep.yml
+  when: service_status.stat.exists == True
+  
+- name: Create group
+  group:
+    name: "{{ svc_group }}"
+    state: present
+  
+- name: Create user
+  user:
+    name: "{{ svc_user }}"
+    state: present
+    create_home: no
+    group: "{{ svc_group }}"
+  
+- name: Create service directory
+  file:
+    path: "{{ svc_path }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ svc_user }}"
+
+- name: Create temporary dir
+  file:
+    state: directory
+    path: "{{ svc_path }}/.temp"
+    
+- name: Download nuget packets
+  get_url:
+    url: "{{ pack_url }}/{{ item }}"
+    dest: "{{ svc_path }}/.temp/{{ item }}"
+  loop: "{{ pack_names }}"
+    
+- name: Unarchive nuget packet
+  unarchive:
+    src: "{{ svc_path }}/.temp/{{ item }}"
+    dest: "{{ svc_path }}"
+    owner: "{{ svc_user }}"
+    remote_src: yes
+  loop: "{{ pack_names }}"
+
+- name: Create config directories
+  file:
+    path: "{{ item.path }}"
+    state: directory
+    owner: "{{ svc_user }}"
+  loop: "{{ template_conf_dirs }}"
+
+- name: Download nuget configs
+  get_url:
+    url: "{{ pack_url }}/{{ item }}"
+    dest: "{{ svc_path }}/.temp/{{ item }}.zip"
+  loop: "{{ conf_names }}"
+
+- name: Unzip nuget configs
+  unarchive:
+    src: "{{ svc_path }}/.temp/{{ item }}.zip"
+    dest: "{{ svc_path }}/.temp"
+    remote_src: yes
+  loop: "{{ conf_names }}"
+
+- name: Create a file from a Jinja2 template
+  template:
+    src: "templates/yashavars.yml.j2"
+    dest: "{{ svc_path }}/.temp/yashavars.yml"
+  
+- name: Find templates in temp
+  find:
+    paths: "{{ svc_path }}/.temp"
+    file_type: file
+    recurse: yes
+    patterns: '*.j2'
+  register: get_templ
+  
+- name: Process templates
+  shell: |
+    yasha -v {{ svc_path }}/.temp/yashavars.yml {{ item.path }} -o {{ item.path|replace("/.temp","")|replace(".j2","")|replace("/src/templates","") }}
+  loop: "{{ get_templ.files }}"
+
+- name: Remove temp directory
+  file:
+    path: "{{ svc_path }}/.temp"
+    state: absent
+  
+- name: Create systemd unit from template
+  template:
+    src: "{{ template_conf_dirs }}/eftr-forefront2.service.j2"
+    dest: /etc/systemd/system/eftr-forefront2.service
+  when: service_status.stat.exists == False
+
+- name: Just force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+
+- name: Start and enable service
+  systemd:
+    name: "{{ svc_name }}"
+    state: started
+    enabled: yes
+
+#- name: Send mail notification
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: username@gmail.com
+#    password: mysecret
+#    to: John Smith <john.smith@example.com>
+#    subject: Ansible-report
+#    body: System "{{ ansible_hostname }}" has been successfully provisioned.
+#  delegate_to: localhost
