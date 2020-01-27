@@ -22,7 +22,7 @@ tasks:
   - paramiko
   - pywinrm
   
-- name: Upgrade all packages
+- name: Install Ansible
   yum:
     name: ansible
     state: present
