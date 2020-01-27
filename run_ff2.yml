@@ -1,4 +1,0 @@
-# ansible-playbook -s run_ff2.yml
-- hosts: webservers
-  roles:
-    - ff2
